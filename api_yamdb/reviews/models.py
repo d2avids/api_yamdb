@@ -2,14 +2,16 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils import timezone
-
+import uuid
 
 from .constants import Role
 
 
 class CustomUser(AbstractUser):
-    role = models.CharField(max_length=50, choices=Role.choices, default=Role.USER)
+    role = models.CharField(max_length=50, choices=Role.choices,
+                            default=Role.USER)
     bio = models.CharField(max_length=500, blank=True, null=True)
+    confirmation_code = models.UUIDField(default=uuid.uuid4, unique=True)
 
     @property
     def is_moderator(self):
