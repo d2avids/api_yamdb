@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "reviews",
     "api",
     "drf_yasg",  # swagger
+    'django_filters',
 ]
 
 MIDDLEWARE = [

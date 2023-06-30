@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, RegexValidator
 from django.db import models
 from django.utils import timezone
 
@@ -25,12 +25,60 @@ class CustomUser(AbstractUser):
 
 class Genre(models.Model):
     """Модель для жанра."""
-    pass
+
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название жанра'
+    )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        validators=(
+            RegexValidator(
+                regex=r'^[-a-zA-Z0-9_]+$',
+                message='Слаг для страницы с жанром может содержать только латинские'
+                        'буквы и любые цифры, а также дефис и нижнее подчеркивание'
+            ),
+        ),
+        verbose_name='Адрес для страницы с жанром'
+    )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):
     """Модель для категории(типа)."""
-    pass
+
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название категории'
+    )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        validators=(
+            RegexValidator(
+                regex=r'^[-a-zA-Z0-9_]+$',
+                message='Слаг для страницы с категорией может содержать только латинские'
+                        'буквы и любые цифры, а также дефис и нижнее подчеркивание'
+            ),
+        ),
+        verbose_name='Адрес для страницы с категорией'
+    )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -64,11 +112,10 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         # through='GenreTitle',
-        # through_fields=('genre', 'title'),
+        # through_fields=('title', 'genre'),
         related_name='titles',
         verbose_name='Жанр произведения'
     )
-
 
     class Meta:
         ordering = ('name',)
@@ -80,7 +127,7 @@ class Title(models.Model):
 
 
 # class GenreTitle(models.Model):
-#     """Модель, связывающая жанры с произведениями."""
+#     """Модель, связывающая произведения с жанрами."""
 
 #     genre = models.ForeignKey(
 #         Genre,
@@ -92,3 +139,6 @@ class Title(models.Model):
 #         on_delete=models.CASCADE,
 #         verbose_name='Произведение'
 #     )
+
+#     def __str__(self):
+#         return f'Жанр {self.title} - {self.genre}'
