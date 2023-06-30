@@ -3,6 +3,7 @@ from rest_framework import exceptions
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.validators import UniqueValidator
+from django.core.validators import RegexValidator
 from reviews.models import CustomUser
 from reviews.utils import Util
 from django.utils import timezone
@@ -23,8 +24,10 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
         return RefreshToken.for_user(user)
 
     def validate(self, attrs):
-        user = CustomUser.objects.filter(username=attrs[self.username_field],
-                                              confirmation_code=attrs['confirmation_code']).first()
+        user = CustomUser.objects.filter(
+            username=attrs[self.username_field],
+            confirmation_code=attrs['confirmation_code']
+        ).first()
         if not user:
             raise exceptions.AuthenticationFailed(
                 "Incorrect username or confirmation_code",
@@ -48,7 +51,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор кастомного юзера, исключение пароля."""
     class Meta:
         model = CustomUser
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
+        fields = (
+            "username", "email", "first_name", "last_name", "bio", "role"
+        )
 
     def create(self, validated_data):
         validated_data.pop('password', None)
@@ -62,13 +67,18 @@ class RegisterSerializer(serializers.ModelSerializer):
     """
     email = serializers.EmailField(
         required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())]
-    )
+        validators=[UniqueValidator(queryset=CustomUser.objects.all())])
 
     username = serializers.CharField(
-        max_length=30,
+        max_length=150,
         required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())]
+        validators=[UniqueValidator(queryset=CustomUser.objects.all()),
+                    RegexValidator(
+                        regex=r'^[\w.@+-]+\z',
+                        message='Имя пользователя может содержать '
+                                'только буквы, цифры и следующие символы: '
+                                '@/./+/-/_'
+                    )]
     )
 
     class Meta:
