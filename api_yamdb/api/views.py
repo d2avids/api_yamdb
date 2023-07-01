@@ -23,15 +23,18 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
 
-    @action(detail=False, methods=["get", "patch"])
+    @action(detail=False,
+            methods=["get", "patch"])
     def me(self, request, pk=None):
         if request.method == 'PATCH':
-            self.get_serializer(
+            serializer = self.get_serializer(
                 request.user,
                 data=request.data,
                 partial=True
             )
-        self.get_serializer().save()
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
         return Response(self.get_serializer(request.user).data)
 
 

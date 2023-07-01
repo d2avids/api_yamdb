@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=50, choices=Role.choices,
                             default=Role.USER)
     bio = models.CharField(max_length=500, blank=True, null=True)
-    confirmation_code = models.UUIDField(default=uuid.uuid4)
+    confirmation_code = models.UUIDField(default=str(uuid.uuid4()))
 
     @property
     def is_moderator(self):

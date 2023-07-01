@@ -74,7 +74,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         required=True,
         validators=[UniqueValidator(queryset=CustomUser.objects.all()),
                     RegexValidator(
-                        regex=r'^[\w.@+-]+\z',
+                        regex=r'^[\w.@+-]+$',
                         message='Имя пользователя может содержать '
                                 'только буквы, цифры и следующие символы: '
                                 '@/./+/-/_'
