@@ -6,6 +6,7 @@ from reviews.models import CustomUser
 from rest_framework.filters import SearchFilter
 
 from .serializers import CustomTokenObtainSerializer, CustomUserSerializer, RegisterSerializer
+from .permissions import IsAdmin, IsAuthorOrReadOnly
 
 
 class TokenObtainView(TokenObtainPairView):
@@ -22,9 +23,12 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
+    permission_classes = (IsAdmin, )
 
     @action(detail=False,
-            methods=["get", "patch"])
+            methods=["get", "patch"],
+            permission_classes=(IsAuthorOrReadOnly, )
+            )
     def me(self, request, pk=None):
         if request.method == 'PATCH':
             serializer = self.get_serializer(
