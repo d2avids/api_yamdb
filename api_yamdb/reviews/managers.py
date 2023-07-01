@@ -4,6 +4,8 @@ from .constants import Role
 
 
 class CustomUserManager(UserManager):
+    """Кастоный юзер менеджер для фильтрации по ролям."""
+
     def admins(self):
         return self.filter(role=Role.ADMIN)
 
