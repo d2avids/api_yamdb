@@ -94,6 +94,7 @@ class Title(models.Model):
 #     )
 
 class Review(models.Model):
+    """Модель отзыва пользователя о произведении."""
     title = models.ForeignKey(
         Title,
         verbose_name='Название произведения',
@@ -110,7 +111,7 @@ class Review(models.Model):
         related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
-        verbose_name='Рейтинг',
+        verbose_name='Оценка',
         validators=[
             MinValueValidator(1, 'Допустимы значения от 1 до 10'),
             MaxValueValidator(10, 'Допустимы значения от 1 до 10')
@@ -135,6 +136,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
+    """Модель коменнтариея пользователя на отзыв."""
     review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
@@ -146,7 +148,7 @@ class Comment(models.Model):
     )
     author = models.ForeignKey(
         CustomUser,
-        verbose_name='Пользователь',
+        verbose_name='Автор комментария',
         on_delete=models.CASCADE,
         related_name='comments'
     )
