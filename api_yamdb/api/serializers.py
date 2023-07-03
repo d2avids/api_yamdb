@@ -110,7 +110,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    '''Сериализатордля для модели Review'''
+    '''Сериализатор для для модели Review'''
     title = serializers.SlugRelatedField(
         slug_field='name',
         read_only=True,
