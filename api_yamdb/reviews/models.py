@@ -111,8 +111,8 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        # through='GenreTitle',
-        # through_fields=('title', 'genre'),
+        through='GenreTitle',
+        through_fields=('title', 'genre'),
         related_name='titles',
         verbose_name='Жанр произведения'
     )
@@ -126,19 +126,19 @@ class Title(models.Model):
         return self.name
 
 
-# class GenreTitle(models.Model):
-#     """Модель, связывающая произведения с жанрами."""
+class GenreTitle(models.Model):
+    """Модель, связывающая произведения с жанрами."""
 
-#     genre = models.ForeignKey(
-#         Genre,
-#         on_delete=models.CASCADE,
-#         verbose_name='Жанр произведения'
-#     )
-#     title = models.ForeignKey(
-#         Title,
-#         on_delete=models.CASCADE,
-#         verbose_name='Произведение'
-#     )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        verbose_name='Жанр произведения'
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
+    )
 
-#     def __str__(self):
-#         return f'Жанр {self.title} - {self.genre}'
+    def __str__(self):
+        return f'Жанр {self.title} - {self.genre}'

@@ -24,21 +24,47 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий."""
+
     class Meta:
         fields = ('name', 'slug')
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для жанров."""
+
     class Meta:
         fields = ('name', 'slug')
         model = Genre
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleSafeSerializer(serializers.ModelSerializer):
+    """Сериализатор для произведений при безопасных запросах."""
+
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(
         read_only=True,
+        many=True
+    )
+
+    class Meta:
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+        model = Title
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """Сериализатор для произведений при небезопасных запросах."""
+
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
         many=True
     )
 

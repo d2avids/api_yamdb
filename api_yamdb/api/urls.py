@@ -6,9 +6,9 @@ from .views import (CustomUserModelViewSet, TokenObtainView, TitleViewSet,
 
 router_v1 = DefaultRouter()
 router_v1.register("v1/users", CustomUserModelViewSet, basename="user")
-router_v1.register("v1/titles", TitleViewSet, basename="title")
-router_v1.register("v1/genres", GenreViewSet, basename="genre")
-router_v1.register("v1/categories", CategoryViewSet, basename="category")
+router_v1.register(r"v1/titles", TitleViewSet, basename="title")
+router_v1.register(r"v1/genres", GenreViewSet, basename="genre")
+router_v1.register(r"v1/categories", CategoryViewSet, basename="category")
 
 urlpatterns = [
     path("", include(router_v1.urls)),
