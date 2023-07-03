@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,10 +21,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "rest_framework_simplejwt",
     "reviews",
     "api",
     "drf_yasg",  # swagger
+    "django_filters",  # drf поиск
 ]
 
 MIDDLEWARE = [
@@ -111,7 +114,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 # Авторизация через JWT в SWAGGER
@@ -120,3 +122,8 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apiKey", "in": "header", "name": "Authorization"}
     },
 }
+
+# Эмуляция почтовых сообщений через текстовые файлы
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
