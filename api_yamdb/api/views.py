@@ -10,6 +10,7 @@ from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly
 from .serializers import CustomTokenObtainSerializer, CustomUserSerializer, RegisterSerializer, ReviewSerializer, CommentSerializer
 
 
+
 class TokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
 
@@ -24,9 +25,12 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
-    
+    permission_classes = (IsAdmin, )
+
     @action(detail=False,
-            methods=["get", "patch"])
+            methods=["get", "patch"],
+            permission_classes=(IsAuthorOrReadOnly, )
+            )
     def me(self, request, pk=None):
         if request.method == 'PATCH':
             serializer = self.get_serializer(
