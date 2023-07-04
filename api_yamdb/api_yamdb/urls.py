@@ -30,5 +30,5 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("redoc/", TemplateView.as_view(template_name="redoc.html"), name="redoc"),
-    path("api/", include("api.urls")),
+    path("api/v1/", include("api.urls")),
 ]

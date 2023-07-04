@@ -6,10 +6,10 @@ from .views import (CustomUserModelViewSet, TokenObtainView, RegisterModelViewSe
                     ReviewViewSet, CommentViewSet)
 
 router_v1 = DefaultRouter()
-router_v1.register("v1/users", CustomUserModelViewSet, basename="user")
-router_v1.register(r"v1/titles", TitleViewSet, basename="title")
-router_v1.register(r"v1/genres", GenreViewSet, basename="genre")
-router_v1.register(r"v1/categories", CategoryViewSet, basename="category")
+router_v1.register("users", CustomUserModelViewSet, basename="user")
+router_v1.register(r"titles", TitleViewSet, basename="title")
+router_v1.register(r"genres", GenreViewSet, basename="genre")
+router_v1.register(r"categories", CategoryViewSet, basename="category")
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
@@ -21,6 +21,6 @@ RegisterModelViewSet = RegisterModelViewSet.as_view({
 
 urlpatterns = [
     path("", include(router_v1.urls)),
-    path("v1/auth/token/", TokenObtainView.as_view(), name="token_obtain"),
-    path('v1/auth/signup/', RegisterModelViewSet, name="signup"),
+    path("auth/token/", TokenObtainView.as_view(), name="token_obtain"),
+    path('auth/signup/', RegisterModelViewSet, name="signup"),
 ]
