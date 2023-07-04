@@ -13,7 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
-from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly#, IsAdminOrReadOnly
+from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrReadOnly
 
 
 class TokenObtainView(TokenObtainPairView):
@@ -57,11 +57,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-    # permission_classes = (
-    #     IsAuthorOrReadOnly,
-    #     IsAdminOrReadOnly,
-    #     IsModerator
-    # )
+    permission_classes = (IsAuthorOrReadOnly, IsAdmin, IsModerator)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -79,7 +75,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     http_method_names = ['get', 'post', 'delete']
-    # permission_classes = (IsAdminOrReadOnly, IsModerator)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -95,7 +91,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get', 'post', 'delete']
-    # permission_classes = (IsAdminOrReadOnly, IsModerator) 
+    permission_classes = (IsAdminOrReadOnly,) 
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
