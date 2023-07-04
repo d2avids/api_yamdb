@@ -1,13 +1,19 @@
-from rest_framework import viewsets
+from  rest_framework.exceptions import MethodNotAllowed
+from rest_framework import viewsets, filters
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .filters import TitleFilter
+from reviews.models import CustomUser, Title, Genre, Category, Review
+from .serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
+                          TitleSerializer, GenreSerializer, CategorySerializer,
+                          TitleSafeSerializer, RegisterSerializer, ReviewSerializer,
+                          CommentSerializer)
+
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
-from reviews.models import CustomUser, Review, Title
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
-
-from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly
-from .serializers import CustomTokenObtainSerializer, CustomUserSerializer, RegisterSerializer, ReviewSerializer, CommentSerializer
+from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrReadOnly
 
 
 
@@ -19,7 +25,6 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     """
     ViewSet для User эндпоинтов с username вместо id и реализованным поиском
     """
-
     lookup_field = 'username'
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
@@ -42,11 +47,61 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
             serializer.save()
 
         return Response(self.get_serializer(request.user).data)
-      
-      
+
+
 class RegisterModelViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     queryset = CustomUser.objects.all()
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    """Вьюсет предоставляет список произведений."""
+
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = (IsAuthorOrReadOnly, IsAdmin, IsModerator)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        """Стандартный метод вьюсет, который определяет
+        какой из доступных сериализаторов должен обрабатывать
+        данные в зависимости от действия."""
+        if self.action == ['list', 'retrieve']:
+            return TitleSafeSerializer
+        return TitleSerializer
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    """Вьюсет предоставляет список жанров произведений."""
+
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    http_method_names = ['get', 'post', 'delete']
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+    def retrieve(self, request, *args, **kwargs):
+        """Метод исключает запрос отдельного объекта при GET-запросе."""
+        raise MethodNotAllowed('GET')
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """Вьюсет предоставляет список типов произведений."""
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    http_method_names = ['get', 'post', 'delete']
+    permission_classes = (IsAdminOrReadOnly,) 
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+    def retrieve(self, request, *args, **kwargs):
+        """Метод исключает запрос отдельного объекта при GET-запросе."""
+        raise MethodNotAllowed('GET')
     
 
 class ReviewViewSet(viewsets.ModelViewSet):

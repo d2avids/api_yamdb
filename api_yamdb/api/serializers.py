@@ -2,7 +2,8 @@ from rest_framework import serializers
 from rest_framework import exceptions
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import CustomUser, Review, Comment, Title
+
+from reviews.models import CustomUser, Title, Category, Genre, Review, Comment
 from rest_framework.generics import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
@@ -113,6 +114,74 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий."""
+
+    class Meta:
+        fields = ('name', 'slug')
+        model = Category
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для жанров."""
+
+    class Meta:
+        fields = ('name', 'slug')
+        model = Genre
+
+
+class TitleSafeSerializer(serializers.ModelSerializer):
+    """Сериализатор для произведений при безопасных запросах."""
+
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(
+        read_only=True,
+        many=True
+    )
+
+    class Meta:
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+        model = Title
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """Сериализатор для произведений при небезопасных запросах."""
+
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True
+    )
+
+    class Meta:
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
+        model = Title
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    '''Сериализатор для модели Comment'''
+    review = serializers.SlugRelatedField(
+        slug_field='text',
+        read_only=True
+    )
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'author', 'pub_date')
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     '''Сериализатор для для модели Review'''
     title = serializers.SlugRelatedField(
@@ -139,19 +208,3 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ('id', 'author', 'text', 'score', 'pub_date')
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    '''Сериализатор для модели Comment'''
-    review = serializers.SlugRelatedField(
-        slug_field='text',
-        read_only=True
-    )
-    author = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True
-    )
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'text', 'author', 'pub_date')
