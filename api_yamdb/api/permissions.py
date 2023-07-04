@@ -1,20 +1,21 @@
 from rest_framework import permissions
 
 
-class IsAuthorOrReadOnly(permissions.BasePermission):
-    """
-    User может публиковать отзывы и ставить оценки,
-    + изменять свои материалы
-    """
+class IsAuthorModeratorAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
-        return (request.method in permissions.SAFE_METHODS
-                or request.user.is_authenticated)
-
-    def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
-            or obj.author == request.user
+            or request.user.is_authenticated
         )
+
+    def has_object_permission(self, request, view, obj):
+        def has_object_permission(self, request, view, obj):
+            return (
+                    request.method in permissions.SAFE_METHODS
+                    or obj.author == request.user
+                    or request.user.is_moderator
+                    or request.user.is_admin
+            )
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -24,25 +25,14 @@ class IsAdminOrReadOnly(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        return (request.method in permissions.SAFE_METHODS
-                or request.user.is_admin)
-
-
-class IsModerator(permissions.BasePermission):
-    """
-    Модератор имеет право удалять и редактировать любые отзывы и комментарии
-    """
-
-    def has_object_permission(self, request, view, obj):
-        return request.user.is_moderator
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_admin if request.user.is_authenticated else False
 
 
 class IsAdmin(permissions.BasePermission):
-    """
-    Администратор имеет полные права на управление всем контентом проекта
-    """
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS
+        return request.user.is_admin
 
     def has_object_permission(self, request, view, obj):
         return request.user.is_admin
