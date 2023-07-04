@@ -30,7 +30,7 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
     lookup_field = 'username'
-    
+
     @action(detail=False,
             methods=["get", "patch"])
     def me(self, request, pk=None):
@@ -44,8 +44,8 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
             serializer.save()
 
         return Response(self.get_serializer(request.user).data)
-      
-      
+
+
 class RegisterModelViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     queryset = CustomUser.objects.all()
