@@ -7,7 +7,7 @@ from reviews.models import CustomUser, Title, Genre, Category, Review
 from .serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
                           TitleSafeSerializer, RegisterSerializer, ReviewSerializer,
-                          CommentSerializer)
+                          CommentSerializer, CustomUserMeSerializer)
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -34,7 +34,8 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
 
     @action(detail=False,
             methods=["get", "patch"],
-            permission_classes=(IsAuthorOrReadOnly, )
+            permission_classes=(IsAuthorOrReadOnly, ),
+            serializer_class=CustomUserMeSerializer
             )
     def me(self, request, pk=None):
         if request.method == 'PATCH':
