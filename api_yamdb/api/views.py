@@ -16,6 +16,7 @@ from rest_framework.filters import SearchFilter
 from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrReadOnly
 
 
+
 class TokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
 
@@ -24,15 +25,17 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     """
     ViewSet для User эндпоинтов с username вместо id и реализованным поиском
     """
-
+    lookup_field = 'username'
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
-    lookup_field = 'username'
+    permission_classes = (IsAdmin, )
 
     @action(detail=False,
-            methods=["get", "patch"])
+            methods=["get", "patch"],
+            permission_classes=(IsAuthorOrReadOnly, )
+            )
     def me(self, request, pk=None):
         if request.method == 'PATCH':
             serializer = self.get_serializer(

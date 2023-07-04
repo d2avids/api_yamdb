@@ -52,6 +52,10 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор кастомного юзера, исключение пароля."""
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    role = serializers.CharField(read_only=True)
+
     class Meta:
         model = CustomUser
         fields = (
