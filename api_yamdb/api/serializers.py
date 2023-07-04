@@ -54,7 +54,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор кастомного юзера, исключение пароля."""
     username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    role = serializers.CharField(read_only=True)
 
     class Meta:
         model = CustomUser
@@ -65,6 +64,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password', None)
         return super(CustomUserSerializer, self).create(validated_data)
+
+
+class CustomUserMeSerializer(CustomUserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "first_name", "last_name", "bio")
 
 
 class RegisterSerializer(serializers.ModelSerializer):
