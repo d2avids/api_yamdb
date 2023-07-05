@@ -1,7 +1,7 @@
 from  rest_framework.exceptions import MethodNotAllowed
 from rest_framework import viewsets, filters
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import IsAuthenticated
+
 from .filters import TitleFilter
 from reviews.models import CustomUser, Title, Genre, Category, Review
 from .serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
@@ -13,7 +13,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
-from .permissions import IsAdminOrReadOnly, IsAuthorModeratorAdmin, IsAdmin
+from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrReadOnly
 
 
 
@@ -30,11 +30,11 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     filter_backends = (SearchFilter, )
     search_fields = ('username,' )
-    permission_classes = (IsAuthenticated, IsAdmin,)
+    permission_classes = (IsAdmin, )
 
     @action(detail=False,
             methods=["get", "patch"],
-            permission_classes=(IsAuthenticated,),
+            permission_classes=(IsAuthorOrReadOnly, ),
             serializer_class=CustomUserMeSerializer
             )
     def me(self, request, pk=None):
@@ -61,7 +61,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly, IsAdmin, IsModerator)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -108,7 +108,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthorModeratorAdmin,]
+    permission_classes = [IsAdmin, IsModerator, IsAuthorOrReadOnly]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
@@ -124,7 +124,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthorModeratorAdmin,]
+    permission_classes = [IsAdmin, IsModerator, IsAuthorOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
