@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from rest_framework import exceptions
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from reviews.models import CustomUser, Title, Category, Genre, Review, Comment
 from rest_framework.generics import get_object_or_404
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
 from reviews.utils import Util
@@ -29,24 +28,30 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
     def validate(self, attrs):
         user = CustomUser.objects.filter(
             username=attrs[self.username_field],
-            confirmation_code=attrs['confirmation_code']
         ).first()
+
         if not user:
-            raise exceptions.AuthenticationFailed(
-                "Incorrect username or confirmation_code",
+            raise NotFound(
+                {'username': 'Пользователь с таким username не существует'},
+                code='user_not_found',
             )
 
         if not user.is_active:
-            raise exceptions.AuthenticationFailed(
-                self.error_messages["no_active_account"],
-                "no_active_account",
+            raise ValidationError(
+                'Данный аккаунт неактивен',
+                code='inactive_account',
+            )
+
+        if str(user.confirmation_code) != attrs['confirmation_code']:
+            raise ValidationError(
+                {'confirmation_code': 'Неверный код подтверждения'},
+                code='invalid_confirmation_code',
             )
 
         self.user = user
 
         user.last_login = timezone.now()
         user.save()
-
         return {'token': str(self.get_token(self.user).access_token)}
 
 
@@ -100,6 +105,7 @@ class RegisterSerializer(CustomUserSerializer):
     Сериалиазтор регистрации по username и email с получением confirmation_code
     на почту, валидация на уникальность и username != me
     """
+
     class Meta:
         model = CustomUser
         fields = ('username', 'email')
