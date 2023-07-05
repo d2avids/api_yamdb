@@ -12,6 +12,7 @@ from .serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorModeratorAdmin, IsAdmin
@@ -28,9 +29,11 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+    http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (SearchFilter,)
-    search_fields = ('username,')
+    search_fields = ('username',)
     permission_classes = (IsAuthenticated, IsAdmin,)
+    pagination_class = PageNumberPagination
 
     @action(detail=False,
             methods=["get", "patch"],
