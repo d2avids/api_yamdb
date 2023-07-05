@@ -81,8 +81,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        if data['username'] == 'me':
-            raise serializers.ValidationError("<me> can't be a username")
+        if 'username' in data:
+            if data['username'] == 'me':
+                raise serializers.ValidationError("<me> can't be a username")
 
         return data
 
@@ -90,7 +91,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class CustomUserMeSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
-        fields = ("username", "email", "first_name", "last_name", "bio")
+        fields = ("username", "email", "first_name", "last_name", "bio", "role",)
+        read_only_fields = ("role",)
 
 
 class RegisterSerializer(CustomUserSerializer):
