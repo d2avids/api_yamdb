@@ -13,7 +13,7 @@ router_v1.register(r"categories", CategoryViewSet, basename="category")
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router_v1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
-                r'/comments', CommentViewSet, basename='comments')
+                   r'/comments', CommentViewSet, basename='comments')
 
 RegisterModelViewSet = RegisterModelViewSet.as_view({
     'post': 'create',

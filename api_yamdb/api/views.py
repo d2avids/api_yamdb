@@ -1,5 +1,5 @@
 from  rest_framework.exceptions import MethodNotAllowed
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .filters import TitleFilter
@@ -53,6 +53,13 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
 class RegisterModelViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     queryset = CustomUser.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
