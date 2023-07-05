@@ -1,5 +1,5 @@
 from  rest_framework.exceptions import MethodNotAllowed
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .filters import TitleFilter
@@ -19,22 +19,6 @@ from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrRead
 
 class TokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
-
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
-        try:
-            user = CustomUser.objects.get(username=data['username'])
-        except CustomUser.NonExist:
-            return Response(
-                {'username': 'Пользователь с таким username не существует'},
-                status=status.HTTP_404_NOT_FOUND)
-        if data.get('confirmation_code') == user.confirmation_code:
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(
-            {'confirmation_code': 'Неверный confirmation code.'},
-            status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomUserModelViewSet(viewsets.ModelViewSet):
@@ -69,13 +53,6 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
 class RegisterModelViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     queryset = CustomUser.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
