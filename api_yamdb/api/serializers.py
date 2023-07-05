@@ -52,32 +52,8 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор кастомного юзера, исключение пароля."""
-    username = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
-
-    class Meta:
-        model = CustomUser
-        fields = (
-            "username", "email", "first_name", "last_name", "bio", "role"
-        )
-
-    def create(self, validated_data):
-        validated_data.pop('password', None)
-        return super(CustomUserSerializer, self).create(validated_data)
-
-
-class CustomUserMeSerializer(CustomUserSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ("username", "email", "first_name", "last_name", "bio")
-
-
-class RegisterSerializer(serializers.ModelSerializer):
-    """
-    Сериалиазтор регистрации по username и email с получением confirmation_code
-    на почту, валидация на уникальность и username != me
-    """
     email = serializers.EmailField(
+        max_length=254,
         required=True,
         validators=[UniqueValidator(queryset=CustomUser.objects.all())])
 
@@ -95,6 +71,35 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
+        fields = (
+            "username", "email", "first_name", "last_name", "bio", "role"
+        )
+
+    def create(self, validated_data):
+        validated_data.pop('password', None)
+        return super(CustomUserSerializer, self).create(validated_data)
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        if data['username'] == 'me':
+            raise serializers.ValidationError("<me> can't be a username")
+
+        return data
+
+
+class CustomUserMeSerializer(CustomUserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("username", "email", "first_name", "last_name", "bio")
+
+
+class RegisterSerializer(CustomUserSerializer):
+    """
+    Сериалиазтор регистрации по username и email с получением confirmation_code
+    на почту, валидация на уникальность и username != me
+    """
+    class Meta:
+        model = CustomUser
         fields = ('username', 'email')
 
     def create(self, validated_data):
@@ -110,13 +115,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
         return user
-
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        if data['username'] == 'me':
-            raise serializers.ValidationError("<me> can't be a username")
-
-        return data
 
 
 class CategorySerializer(serializers.ModelSerializer):

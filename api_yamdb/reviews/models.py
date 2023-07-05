@@ -11,6 +11,14 @@ from .constants import Role
 class CustomUser(AbstractUser):
     role = models.CharField(max_length=50, choices=Role.choices,
                             default=Role.USER)
+    first_name = models.CharField(
+        max_length=150,
+        blank=True
+    )
+    last_name = models.CharField(
+        max_length=150,
+        blank=True
+    )
     bio = models.CharField(max_length=500, blank=True, null=True)
     confirmation_code = models.UUIDField(default=str(uuid.uuid4()))
 
