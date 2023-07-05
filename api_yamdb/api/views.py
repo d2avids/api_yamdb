@@ -1,20 +1,20 @@
-from  rest_framework.exceptions import MethodNotAllowed
-from rest_framework import viewsets, filters
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework import viewsets, filters, status
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from rest_framework.permissions import IsAuthenticated
 from .filters import TitleFilter
 from reviews.models import CustomUser, Title, Genre, Category, Review
 from .serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
                           TitleSerializer, GenreSerializer, CategorySerializer,
-                          TitleSafeSerializer, RegisterSerializer, ReviewSerializer,
+                          TitleSafeSerializer, RegisterSerializer,
+                          ReviewSerializer,
                           CommentSerializer, CustomUserMeSerializer)
 
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
-from .permissions import IsAdmin, IsModerator, IsAuthorOrReadOnly, IsAdminOrReadOnly
-
+from .permissions import IsAdminOrReadOnly, IsAuthorModeratorAdmin, IsAdmin
 
 
 class TokenObtainView(TokenObtainPairView):
@@ -28,13 +28,13 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
-    filter_backends = (SearchFilter, )
-    search_fields = ('username,' )
-    permission_classes = (IsAdmin, )
+    filter_backends = (SearchFilter,)
+    search_fields = ('username,')
+    permission_classes = (IsAuthenticated, IsAdmin,)
 
     @action(detail=False,
             methods=["get", "patch"],
-            permission_classes=(IsAuthorOrReadOnly, ),
+            permission_classes=(IsAuthenticated,),
             serializer_class=CustomUserMeSerializer
             )
     def me(self, request, pk=None):
@@ -54,6 +54,13 @@ class RegisterModelViewSet(viewsets.ModelViewSet):
     serializer_class = RegisterSerializer
     queryset = CustomUser.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет предоставляет список произведений."""
@@ -61,7 +68,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAuthorOrReadOnly, IsAdmin, IsModerator)
+    permission_classes = (IsAdminOrReadOnly,)
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
@@ -95,7 +102,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get', 'post', 'delete']
-    permission_classes = (IsAdminOrReadOnly,) 
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
@@ -103,12 +110,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """Метод исключает запрос отдельного объекта при GET-запросе."""
         raise MethodNotAllowed('GET')
-    
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = ReviewSerializer
-    permission_classes = [IsAdmin, IsModerator, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorModeratorAdmin, ]
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
@@ -124,7 +131,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = CommentSerializer
-    permission_classes = [IsAdmin, IsModerator, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorModeratorAdmin, ]
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"))
