@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reviews', '0004_alter_customuser_confirmation_code'),
+        ("reviews", "0004_alter_customuser_confirmation_code"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='confirmation_code',
-            field=models.UUIDField(default='15853bd2-07b7-4c7f-85a9-33e9f9837de5'),
+            model_name="customuser",
+            name="confirmation_code",
+            field=models.UUIDField(default="15853bd2-07b7-4c7f-85a9-33e9f9837de5"),
         ),
     ]
