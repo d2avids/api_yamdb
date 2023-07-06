@@ -80,10 +80,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "username", "email", "first_name", "last_name", "bio", "role"
         )
 
-    def create(self, validated_data):
-        validated_data.pop('password', None)
-        return super(CustomUserSerializer, self).create(validated_data)
-
     def validate(self, attrs):
         data = super().validate(attrs)
         if 'username' in data:
@@ -96,7 +92,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class CustomUserMeSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
-        fields = ("username", "email", "first_name", "last_name", "bio", "role",)
+        fields = (
+            "username", "email", "first_name", "last_name", "bio", "role",
+        )
         read_only_fields = ("role",)
 
 
@@ -105,17 +103,51 @@ class RegisterSerializer(CustomUserSerializer):
     Сериалиазтор регистрации по username и email с получением confirmation_code
     на почту, валидация на уникальность и username != me
     """
+    email = serializers.EmailField(
+        max_length=254,
+        required=True,
+    )
+
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        validators=[RegexValidator(
+            regex=r'^[\w.@+-]+$',
+            message='Имя пользователя может содержать '
+                    'только буквы, цифры и следующие символы: '
+                    '@/./+/-/_'
+            )
+        ]
+    )
 
     class Meta:
         model = CustomUser
         fields = ('username', 'email')
 
     def create(self, validated_data):
+        username = validated_data['username']
+        email = validated_data['email']
+
+        user = CustomUser.objects.filter(email=email, username=username).first()
+        if user:
+            return user
+
+        user = CustomUser.objects.filter(email=email).first()
+        if user:
+            raise serializers.ValidationError(
+                'Данный email уже занят'
+            )
+
+        user = CustomUser.objects.filter(username=username).first()
+        if user:
+            raise serializers.ValidationError(
+                'Данный nickname уже занят'
+            )
+
         user = CustomUser.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email']
+            username=username,
+            email=email
         )
-        user.save()
 
         Util.send_mail(
             validated_data['email'],
@@ -152,7 +184,6 @@ class TitleSafeSerializer(serializers.ModelSerializer):
         many=True
     )
     rating = serializers.IntegerField(read_only=True)
-
 
     class Meta:
         fields = (
