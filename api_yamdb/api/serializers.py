@@ -131,6 +131,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
+        lookup_field = 'name'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -139,6 +140,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
+        lookup_field = 'name'
 
 
 class TitleSafeSerializer(serializers.ModelSerializer):
@@ -149,10 +151,12 @@ class TitleSafeSerializer(serializers.ModelSerializer):
         read_only=True,
         many=True
     )
+    rating = serializers.IntegerField(read_only=True)
+
 
     class Meta:
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'description', 'genre', 'category', 'rating'
         )
         model = Title
 
@@ -176,6 +180,11 @@ class TitleSerializer(serializers.ModelSerializer):
         )
         model = Title
 
+    def to_representation(self, title):
+        """Определяет сериализатор для чтения."""
+        serializer = TitleSafeSerializer(title)
+        return serializer.data
+
 
 class CommentSerializer(serializers.ModelSerializer):
     '''Сериализатор для модели Comment'''
@@ -190,7 +199,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    '''Сериализатор для для модели Review'''
+    '''Сериализатор для модели Review'''
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',
