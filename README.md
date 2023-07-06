@@ -107,7 +107,7 @@ python manage.py runserver
 ```
 
 ---
-### Авторы:
+## Авторы:
 - :globe_with_meridians: [d2avids (в роли Python-разработчика Тимлид - разработчик 1)](https://github.com/d2avids)
 - :globe_with_meridians: [Dimitresku (в роли Python-разработчика - разработчик 2)](https://github.com/Dimitresku)
 - :globe_with_meridians: [Pletennyy роль (в роли Python-разработчика - разработчик 3)](https://github.com/Pletennyy)
