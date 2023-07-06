@@ -2,9 +2,9 @@
 ### Описание
 ---
 Команда разработки:
-- :white_check_mark: [d2avids (в роли Python-разработчика Тимлид - разработчик 1)](https://github.com/d2avids)
-- :white_check_mark: [Dimitresku (в роли Python-разработчика - разработчик 2)](https://github.com/Dimitresku)
-- :white_check_mark: [Pletennyy роль (в роли Python-разработчика - разработчик 3)](https://github.com/Pletennyy)
+- :globe_with_meridians: [d2avids (в роли Python-разработчика Тимлид - разработчик 1)](https://github.com/d2avids)
+- :globe_with_meridians: [Dimitresku (в роли Python-разработчика - разработчик 2)](https://github.com/Dimitresku)
+- :globe_with_meridians: [Pletennyy роль (в роли Python-разработчика - разработчик 3)](https://github.com/Pletennyy)
 ---
 Подробная документация проекта с описанием API 
 доступна после развертывания на /redoc
@@ -105,3 +105,9 @@ python manage.py migrate
 ```bash
 python manage.py runserver
 ```
+
+---
+### Авторы:
+- :globe_with_meridians: [d2avids (в роли Python-разработчика Тимлид - разработчик 1)](https://github.com/d2avids)
+- :globe_with_meridians: [Dimitresku (в роли Python-разработчика - разработчик 2)](https://github.com/Dimitresku)
+- :globe_with_meridians: [Pletennyy роль (в роли Python-разработчика - разработчик 3)](https://github.com/Pletennyy)
