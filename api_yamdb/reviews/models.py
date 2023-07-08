@@ -11,13 +11,25 @@ from .constants import Role
 
 
 class CustomUser(AbstractUser):
+    """Кастомный юзер с пользовательской ролью .constants.Role."""
     role = models.CharField(
-        max_length=50, choices=Role.choices, default=Role.USER
+        verbose_name='Пользовательская роль',
+        max_length=50,
+        choices=Role.choices,
+        default=Role.USER
     )
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
-    bio = models.CharField(max_length=500, blank=True, null=True)
-    confirmation_code = models.UUIDField(default=str(uuid.uuid4()))
+    first_name = models.CharField(
+        verbose_name='Имя', max_length=150, blank=True
+    )
+    last_name = models.CharField(
+        verbose_name='Фамилия', max_length=150, blank=True
+    )
+    bio = models.CharField(
+        verbose_name='О себе', max_length=500, blank=True, null=True
+    )
+    confirmation_code = models.UUIDField(
+        verbose_name='Код подтверждения', default=str(uuid.uuid4())
+    )
 
     @property
     def is_moderator(self):
@@ -37,11 +49,10 @@ class CustomUser(AbstractUser):
 
 
 class Genre(models.Model):
-    """Модель для жанра."""
+    """Жанр для произведения: название и slug."""
 
     name = models.CharField(max_length=256, verbose_name="Название жанра")
     slug = models.SlugField(
-        max_length=50,
         unique=True,
         validators=(
             RegexValidator(
@@ -64,11 +75,10 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
-    """Модель для категории(типа)."""
+    """Категория для произведения: название и slug."""
 
     name = models.CharField(max_length=256, verbose_name="Название категории")
     slug = models.SlugField(
-        max_length=50,
         unique=True,
         validators=(
             RegexValidator(
@@ -91,7 +101,7 @@ class Category(models.Model):
 
 
 class Title(models.Model):
-    """Модель для произведения."""
+    """Произведение: название, год выпуска, описание, категория и жанр."""
 
     name = models.CharField(
         max_length=256, verbose_name="Название произведения"
@@ -134,7 +144,7 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    """Модель, связывающая жанры с произведениями."""
+    """Промежуточная таблица, связывающая жанры с произведениями."""
 
     genre = models.ForeignKey(
         Genre,
@@ -157,13 +167,12 @@ class GenreTitle(models.Model):
         verbose_name = 'Связь жанра с произведением'
         verbose_name_plural = 'Связь жанров с произведениями'
 
-
     def __str__(self):
         return f'Жанр {self.title} - {self.genre}.'
 
 
 class Review(models.Model):
-    """Модель отзыва пользователя о произведении."""
+    """Отзыв пользователя о произведении с возможностью оценки от 1 до 10."""
 
     title = models.ForeignKey(
         Title,
@@ -202,7 +211,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель коменнтария пользователя к отзыву."""
+    """"Коменнтарий пользователя к отзыву."""
 
     review = models.ForeignKey(
         Review,
