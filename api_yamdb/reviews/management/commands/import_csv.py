@@ -1,8 +1,8 @@
 import csv
 
 from django.core.management.base import BaseCommand
-from reviews.models import (Category, Comment, Genre, GenreTitle,
-                            Review, Title, CustomUser)
+from reviews.models import (Category, Comment, CustomUser, Genre, GenreTitle,
+                            Review, Title)
 
 DATA_MODEL = {
     'static/data/users.csv': CustomUser,

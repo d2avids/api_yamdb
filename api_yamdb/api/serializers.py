@@ -86,7 +86,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         if "username" in data:
-            if data["username"] == "me":
+            if data["username"].lower() == "me":
                 raise serializers.ValidationError("<me> can't be a username")
 
         return data

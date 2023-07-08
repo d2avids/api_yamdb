@@ -1,8 +1,7 @@
 import uuid
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import (MaxValueValidator,
-                                    MinValueValidator,
+from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models
 from django.utils import timezone
@@ -25,7 +24,7 @@ class CustomUser(AbstractUser):
         verbose_name='Фамилия', max_length=150, blank=True
     )
     bio = models.CharField(
-        verbose_name='О себе', max_length=500, blank=True, null=True
+        verbose_name='О себе', max_length=500, blank=True
     )
     confirmation_code = models.UUIDField(
         verbose_name='Код подтверждения', default=str(uuid.uuid4())
