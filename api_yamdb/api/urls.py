@@ -10,9 +10,9 @@ router_v1.register("users", CustomUserModelViewSet, basename="user")
 router_v1.register("titles", TitleViewSet, basename="title")
 router_v1.register("genres", GenreViewSet, basename="genre")
 router_v1.register("categories", CategoryViewSet, basename="category")
-router_v1.register('titles/(?P<title_id>\d+)/reviews',
+router_v1.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
-router_v1.register('titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
+router_v1.register(r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)'
                    '/comments', CommentViewSet, basename='comments')
 
 RegisterModelViewSet = RegisterModelViewSet.as_view({
