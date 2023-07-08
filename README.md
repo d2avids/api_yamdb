@@ -93,11 +93,17 @@ pip install -r requirements.txt
 - Осуществить миграции:
 
 ```bash
-python manage.py makemigrations
+python manage.py makemigrations reviews
 ```
 
 ```bash
 python manage.py migrate
+```
+
+- Наполнить базу данными csv(при необходимости):
+
+```bash
+python manage.py import_csv
 ```
 
 - Запуск проекта:

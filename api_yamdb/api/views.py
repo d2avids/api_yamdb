@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -25,13 +24,14 @@ from .serializers import (
     TitleSafeSerializer,
     TitleSerializer,
 )
+from .mixins import GetCreatePatchDestroyMixin, ListCreateDestroyMixin
 
 
 class TokenObtainView(TokenObtainPairView):
     serializer_class = CustomTokenObtainSerializer
 
 
-class CustomUserModelViewSet(viewsets.ModelViewSet):
+class CustomUserModelViewSet(GetCreatePatchDestroyMixin):
     """
     ViewSet для User эндпоинтов с username вместо id и реализованным поиском
     """
@@ -39,7 +39,6 @@ class CustomUserModelViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
-    http_method_names = ["get", "post", "patch", "delete"]
     filter_backends = (SearchFilter,)
     search_fields = ("username",)
     permission_classes = (
@@ -77,10 +76,9 @@ class RegisterModelViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitleViewSet(GetCreatePatchDestroyMixin):
     queryset = Title.objects.annotate(rating=Avg("reviews__score")).all()
     serializer_class = TitleSerializer
-    http_method_names = ["get", "post", "patch", "delete"]
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -95,38 +93,27 @@ class TitleViewSet(viewsets.ModelViewSet):
         return TitleSerializer
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    http_method_names = ["get", "post", "delete"]
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
     pagination_class = PageNumberPagination
 
-    def retrieve(self, request, *args, **kwargs):
-        """Метод исключает запрос отдельного объекта при GET-запросе."""
-        raise MethodNotAllowed("GET")
 
-
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(ListCreateDestroyMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    http_method_names = ["get", "post", "delete"]
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
 
-    def retrieve(self, request, *args, **kwargs):
-        """Метод исключает запрос отдельного объекта при GET-запросе."""
-        raise MethodNotAllowed("GET")
 
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
+class ReviewViewSet(GetCreatePatchDestroyMixin):
     serializer_class = ReviewSerializer
     permission_classes = [
         IsAuthorModeratorAdmin,
@@ -144,8 +131,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=title)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["get", "post", "patch", "delete"]
+class CommentViewSet(GetCreatePatchDestroyMixin):
     serializer_class = CommentSerializer
     permission_classes = [
         IsAuthorModeratorAdmin,
