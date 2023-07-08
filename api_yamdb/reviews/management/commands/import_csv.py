@@ -41,7 +41,7 @@ class Command(BaseCommand):
         for r in DATA_MODEL.items():
             csv_data, model = r
             count = 0
-            with open(csv_data,  mode='r', encoding='utf-8') as csv_file:
+            with open(csv_data, mode='r', encoding='utf-8') as csv_file:
                 reader = csv.DictReader(csv_file)
                 for row in reader:
                     count += 1
@@ -51,8 +51,8 @@ class Command(BaseCommand):
                     except Exception as error:
                         print(f'{error}')
             self.stdout.write(
-                self.style.SUCCESS('csv файлы успешно импортированы.\n'
-                                   f'Модель {model.__name__} наполнена данными.\n'
+                self.style.SUCCESS(f'Модель {model.__name__} '
+                                   f'наполнена данными.\n'
                                    f'Количество строк: {count}.'
-                )
+                                   )
             )
