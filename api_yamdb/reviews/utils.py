@@ -7,8 +7,8 @@ class Util:
         """Метод отправки email сообщений."""
 
         send_mail(
-            'YAmdb confirmation code',
+            "YAmdb confirmation code",
             confirmation_code,
-            'yamdb@yandex.ru',
+            "yamdb@yandex.ru",
             [address]
         )
