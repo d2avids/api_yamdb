@@ -29,6 +29,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.username
+    
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
 
 class Genre(models.Model):
@@ -157,11 +162,11 @@ class Review(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-        ordering = ["pub_date"]
-        constraints = [
+        ordering = ("pub_date",)
+        constraints = (
             models.UniqueConstraint(fields=["title", "author"],
                                     name="unique_review"),
-        ]
+        )
 
 
 class Comment(models.Model):
@@ -189,4 +194,4 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
-        ordering = ["pub_date"]
+        ordering = ("pub_date",)
