@@ -211,7 +211,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """"Коменнтарий пользователя к отзыву."""
+    """Комментарий пользователя к отзыву."""
 
     review = models.ForeignKey(
         Review,
