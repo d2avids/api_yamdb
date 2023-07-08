@@ -6,6 +6,7 @@ from django.core.validators import (MaxValueValidator, MinValueValidator,
 from django.db import models
 from django.utils import timezone
 
+from api_yamdb.settings import SLUG_REGEX
 from .constants import Role
 
 
@@ -55,7 +56,7 @@ class Genre(models.Model):
         unique=True,
         validators=(
             RegexValidator(
-                regex=r"^[-a-zA-Z0-9_]+$",
+                regex=SLUG_REGEX,
                 message="Слаг для страницы с жанром может содержать только "
                 "латинские буквы и любые цифры, а также дефис и нижнее "
                 "подчеркивание",
@@ -81,7 +82,7 @@ class Category(models.Model):
         unique=True,
         validators=(
             RegexValidator(
-                regex=r"^[-a-zA-Z0-9_]+$",
+                regex=SLUG_REGEX,
                 message="Слаг для страницы с жанром может содержать только "
                 "латинские буквы и любые цифры, а также дефис и нижнее "
                 "подчеркивание",

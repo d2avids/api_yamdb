@@ -138,3 +138,7 @@ SWAGGER_SETTINGS = {
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+
+# Константы регулярных выражений
+SLUG_REGEX = r"^[-a-zA-Z0-9_]+$"
+USERNAME_REGEX = r"^[\w.@+-]+$"
