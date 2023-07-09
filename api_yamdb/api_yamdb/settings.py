@@ -19,7 +19,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    default="*"
+    default=["*"]
 ).split(",")
 
 # Application definition
