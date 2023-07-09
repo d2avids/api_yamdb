@@ -1,7 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.viewsets import GenericViewSet
 
 
 class PatchModelMixin(mixins.UpdateModelMixin):

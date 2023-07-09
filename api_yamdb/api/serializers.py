@@ -6,10 +6,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from api_yamdb.settings import USERNAME_REGEX
 from reviews.models import Category, Comment, CustomUser, Genre, Review, Title
 from reviews.utils import Util
+
+from api_yamdb.settings import USERNAME_REGEX
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):

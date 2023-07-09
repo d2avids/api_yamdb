@@ -11,20 +11,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from reviews.models import Category, CustomUser, Genre, Review, Title
 
 from .filters import TitleFilter
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdmin
-from .serializers import (
-    CategorySerializer,
-    CommentSerializer,
-    CustomTokenObtainSerializer,
-    CustomUserMeSerializer,
-    CustomUserSerializer,
-    GenreSerializer,
-    RegisterSerializer,
-    ReviewSerializer,
-    TitleSafeSerializer,
-    TitleSerializer,
-)
 from .mixins import GetCreatePatchDestroyMixin, ListCreateDestroyMixin
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdmin
+from .serializers import (CategorySerializer, CommentSerializer,
+                          CustomTokenObtainSerializer, CustomUserMeSerializer,
+                          CustomUserSerializer, GenreSerializer,
+                          RegisterSerializer, ReviewSerializer,
+                          TitleSafeSerializer, TitleSerializer)
 
 
 class TokenObtainView(TokenObtainPairView):
