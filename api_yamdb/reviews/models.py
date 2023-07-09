@@ -14,23 +14,28 @@ from .constants import Role
 class CustomUser(AbstractUser):
     """Кастомный юзер с пользовательской ролью .constants.Role."""
     role = models.CharField(
-        verbose_name='Пользовательская роль',
+        verbose_name="Пользовательская роль",
         max_length=50,
         choices=Role.choices,
         default=Role.USER
     )
     first_name = models.CharField(
-        verbose_name='Имя', max_length=150, blank=True
+        verbose_name="Имя", max_length=150, blank=True
     )
     last_name = models.CharField(
-        verbose_name='Фамилия', max_length=150, blank=True
+        verbose_name="Фамилия", max_length=150, blank=True
     )
     bio = models.CharField(
-        verbose_name='О себе', max_length=500, blank=True
+        verbose_name="О себе", max_length=500, blank=True
     )
     confirmation_code = models.UUIDField(
-        verbose_name='Код подтверждения', default=str(uuid.uuid4())
+        verbose_name="Код подтверждения", default=str(uuid.uuid4())
     )
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     @property
     def is_moderator(self):
@@ -42,11 +47,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.username
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
 
 
 class Genre(models.Model):
