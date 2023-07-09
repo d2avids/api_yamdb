@@ -1,7 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.viewsets import GenericViewSet
 
 
 class PatchModelMixin(mixins.UpdateModelMixin):
@@ -14,15 +14,20 @@ class PatchModelMixin(mixins.UpdateModelMixin):
 
 
 class GetCreatePatchDestroyMixin(
-    mixins.RetrieveModelMixin, mixins.CreateModelMixin,
-    PatchModelMixin, mixins.ListModelMixin,
-    mixins.DestroyModelMixin, GenericViewSet
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    PatchModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
 ):
     pass
 
 
 class ListCreateDestroyMixin(
-    mixins.ListModelMixin, mixins.CreateModelMixin,
-    mixins.DestroyModelMixin, GenericViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
 ):
     pass

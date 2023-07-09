@@ -15,12 +15,12 @@ SECRET_KEY = os.getenv(
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    default=["*"]
-)
+    default="*"
+).split(",")
 
 # Application definition
 
