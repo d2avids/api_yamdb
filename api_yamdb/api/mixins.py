@@ -14,15 +14,20 @@ class PatchModelMixin(mixins.UpdateModelMixin):
 
 
 class GetCreatePatchDestroyMixin(
-    mixins.RetrieveModelMixin, mixins.CreateModelMixin,
-    PatchModelMixin, mixins.ListModelMixin,
-    mixins.DestroyModelMixin, GenericViewSet
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    PatchModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
 ):
     pass
 
 
 class ListCreateDestroyMixin(
-    mixins.ListModelMixin, mixins.CreateModelMixin,
-    mixins.DestroyModelMixin, GenericViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
 ):
     pass
