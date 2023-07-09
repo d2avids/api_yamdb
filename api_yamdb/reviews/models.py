@@ -1,7 +1,8 @@
 import uuid
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import (MaxValueValidator, MinValueValidator,
+from django.core.validators import (MaxValueValidator,
+                                    MinValueValidator,
                                     RegexValidator)
 from django.db import models
 from django.utils import timezone
@@ -13,24 +14,36 @@ from .constants import Role
 
 class CustomUser(AbstractUser):
     """Кастомный юзер с пользовательской ролью .constants.Role."""
+
     role = models.CharField(
-        verbose_name='Пользовательская роль',
+        verbose_name="Пользовательская роль",
         max_length=50,
         choices=Role.choices,
-        default=Role.USER
+        default=Role.USER,
     )
     first_name = models.CharField(
-        verbose_name='Имя', max_length=150, blank=True
+        verbose_name="Имя",
+        max_length=150,
+        blank=True
     )
     last_name = models.CharField(
-        verbose_name='Фамилия', max_length=150, blank=True
+        verbose_name="Фамилия",
+        max_length=150,
+        blank=True
     )
     bio = models.CharField(
-        verbose_name='О себе', max_length=500, blank=True
+        verbose_name="О себе",
+        max_length=500,
+        lank=True
     )
     confirmation_code = models.UUIDField(
-        verbose_name='Код подтверждения', default=str(uuid.uuid4())
+        verbose_name="Код подтверждения", default=str(uuid.uuid4())
     )
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
 
     @property
     def is_moderator(self):
@@ -43,16 +56,13 @@ class CustomUser(AbstractUser):
     def __str__(self) -> str:
         return self.username
 
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
 
 class Genre(models.Model):
     """Жанр для произведения: название и slug."""
 
-    name = models.CharField(max_length=256, verbose_name="Название жанра")
+    name = models.CharField(
+        max_length=256, verbose_name="Название жанра"
+    )
     slug = models.SlugField(
         unique=True,
         validators=(
@@ -112,7 +122,7 @@ class Title(models.Model):
             MaxValueValidator(
                 int(timezone.now().year),
                 message="Год выпуска для изданных произведений не "
-                        "может быть в будущем",
+                "может быть в будущем",
             ),
         ),
         verbose_name="Год выпуска произведения",
@@ -130,9 +140,9 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        through='GenreTitle',
-        related_name='titles',
-        verbose_name='Жанр произведения'
+        through="GenreTitle",
+        related_name="titles",
+        verbose_name="Жанр произведения",
     )
 
     class Meta:
@@ -148,28 +158,23 @@ class GenreTitle(models.Model):
     """Промежуточная таблица, связывающая жанры с произведениями."""
 
     genre = models.ForeignKey(
-        Genre,
-        on_delete=models.CASCADE,
-        verbose_name='Жанр произведения'
+        Genre, on_delete=models.CASCADE, verbose_name="Жанр произведения"
     )
     title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name='Произведение'
+        Title, on_delete=models.CASCADE, verbose_name="Произведение"
     )
 
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('genre', 'title'),
-                name='unique_genre_title'
+                fields=("genre", "title"), name="unique_genre_title"
             ),
         )
-        verbose_name = 'Связь жанра с произведением'
-        verbose_name_plural = 'Связь жанров с произведениями'
+        verbose_name = "Связь жанра с произведением"
+        verbose_name_plural = "Связь жанров с произведениями"
 
     def __str__(self):
-        return f'Жанр {self.title} - {self.genre}.'
+        return f"Жанр {self.title} - {self.genre}."
 
 
 class Review(models.Model):
